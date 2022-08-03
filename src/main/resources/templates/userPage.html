@@ -9,27 +9,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
 
-    <!--
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-        <link th:rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/css/bootstrap.min.css"/>
-        <link th:rel="stylesheet" th:href="@{webjars/font-awesome/5.11.2/css/all.css} "/>
-    &lt;!&ndash;    <link th:rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css"/>&ndash;&gt;
-        <link th:rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker-standalone.min.css"/>
-    &lt;!&ndash;    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker-standalone.min.css" integrity="sha512-tjNtfoH+ezX5NhKsxuzHc01N4tSBoz15yiML61yoQN/kxWU0ChLIno79qIjqhiuTrQI0h+XPpylj0eZ9pKPQ9g==" crossorigin="anonymous" referrerpolicy="no-referrer" />&ndash;&gt;
-    -->
-
-    <link rel="stylesheet" type="text/css" media="screen"
+    <link rel="stylesheet" type="text/css" media="screen "
           href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css"/>
-    <!--
-            <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
-            <link rel="stylesheet" type="text/css" href="https://eonasdan.github.io/bootstrap-datetimepicker/css/prettify-1.0.css">
-            <link rel="stylesheet" type="text/css" href="https://eonasdan.github.io/bootstrap-datetimepicker/css/base.css">
-
-            <link rel="stylesheet" type="text/css" href="css/bootstrap-datetimepicker.css"> -->
 
     <link rel="stylesheet" type="text/css"
           href="https://cdn.rawgit.com/Eonasdan/bootstrap-datetimepicker/e8bddc60e73c1ec2475f827be36e1957af72e2ea/build/css/bootstrap-datetimepicker.css">
 
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
 
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -46,7 +32,8 @@
 <body>
 <div class="container">
     <br/><br/>
-    <h1>User page</h1>
+        <div th:if="${camper.bookingId == null}"><h1>Create New Booking</h1></div>
+        <div th:unless="${camper.bookingId == null}"><h1>Edit Booking</h1></div>
     <hr>
 
     <form method="post" th:object="${camper}">
@@ -56,15 +43,17 @@
                 <input type="hidden" th:field="*{bookingId}"/>
                 <!--                Input your name:-->
                 <input type="text" th:field="*{userName}" class="form-control" placeholder="Input your name"/></br>
+                <p th:if="${#fields.hasErrors('userName')}" th:errors="*{userName}" th:errorclass="error">Empty Name</p>
 
                 <!--                Select place:-->
-                <select class="form-control" name="place">
-                    <option value="null">Select place</option>
-                    <option th:each="site : ${places}"
-                            th:value="${site.placeName}"
-                            th:text="${site.placeName}">Choose a place
-                    </option>
-                </select></br>
+                        <select th:field="*{place}" class="form-control" required>
+                            <th:block th:if="${camper.bookingId == null}">
+                            <option value="null">Select place</option>
+                            </th:block>
+                            <th:block th:each="site : ${places}">
+                                <option th:text="${site.placeName}" th:value="${site.id}" />
+                            </th:block>
+                        </select></br>
 
                 <!--                Select start date:-->
                 <div class='input-group date' id='datetimepicker6'>

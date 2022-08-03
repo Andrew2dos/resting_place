@@ -4,15 +4,18 @@ import com.andrew2dos.restingplace.entity.Camper;
 import com.andrew2dos.restingplace.entity.Place;
 import com.andrew2dos.restingplace.service.CamperServiceImpl;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.text.ParseException;
 import java.util.List;
 
 @Controller
+@Slf4j
 @AllArgsConstructor
 public class CamperController {
 
@@ -41,9 +44,11 @@ public class CamperController {
     }
 
     @RequestMapping(value = {"/userPage", "/update"}, method = RequestMethod.POST)
-    public String userPage(@ModelAttribute("camper") Camper camper, Model model) {
+    public String userPage(@Valid @ModelAttribute("camper") Camper camper, BindingResult result, Model model) {
+        if (result.hasErrors()) {
+            return "userPage";
+        }
         model.addAttribute("chosenPlace", camper.toString());
-
         camperService.saveCamper(camper);
         return "success";
     }
@@ -63,5 +68,12 @@ public class CamperController {
     public String delete(@Valid @ModelAttribute("camperId") Long bookingId) {
         camperService.deleteById(bookingId);
         return "redirect:/bookingList";
+    }
+
+    @ExceptionHandler(Exception.class)
+    public String handle(Exception e, Model model) {
+        log.error(e.getMessage());
+        model.addAttribute("errorMessage", "ERROR. " + e.getMessage());
+        return "error";
     }
 }

@@ -9,6 +9,6 @@ import java.util.List;
 
 public interface CamperRepository extends JpaRepository<Camper, Long> {
 
-    List<Camper> findAll();
+    List<Camper> findAllByOrderByBookingId();
     //findAllByOrderByIdAsc();;
 }

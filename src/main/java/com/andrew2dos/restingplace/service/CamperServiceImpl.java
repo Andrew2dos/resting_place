@@ -5,13 +5,18 @@ import com.andrew2dos.restingplace.entity.Place;
 import com.andrew2dos.restingplace.repository.CamperRepository;
 import com.andrew2dos.restingplace.repository.PlaceRepository;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@Slf4j
 @AllArgsConstructor
 public class CamperServiceImpl implements CamperService {
 
@@ -25,7 +30,7 @@ public class CamperServiceImpl implements CamperService {
 
     @Override
     public List<Camper> getAllCampers() {
-        return camperRepository.findAll();
+        return camperRepository.findAllByOrderByBookingId();
     }
 
     @Override
@@ -48,6 +53,30 @@ public class CamperServiceImpl implements CamperService {
     }
 
     public Camper saveCamper(Camper camper) {
-        return camperRepository.save(camper);
+        if(isWithinRange(camper.getBookingId(), camper.getPlace(), camper.getStartDate(), camper.getEndDate())){
+            throw new RuntimeException("The '" + camper.getPlace().getPlaceName() + "' is already booked for this date range");
+        } else {
+            return camperRepository.save(camper);
+        }
+    }
+
+    public boolean isWithinRange(Long id, Place place, Date startDate, Date endDate){
+
+        List<Camper> camperList = getAllCampers();
+
+        boolean isOverlap = false;
+
+        for (Camper camp : camperList ) {
+            Date testDateStart = camp.getStartDate();
+            Date testDateEnd = camp.getEndDate();
+            Place testPlace = camp.getPlace();
+            if(     (camp.getBookingId() != id)
+                    && (testPlace.equals(place))
+                    && (startDate.getTime() <= testDateEnd.getTime())
+                    && (testDateStart.getTime() <= endDate.getTime())){
+                isOverlap = true;
+            }
+        }
+        return isOverlap;
     }
 }

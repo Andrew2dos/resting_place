@@ -12,9 +12,11 @@ public class Place {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @NotNull(message = "Id's cannot be Null")
-    private Long Id;
+    @Column(name = "id")
+    private Long id;
 
     @NotNull(message = "Place name's cannot be Null")
     @Column(name = "place_name")
-    private String placeName;
+    private String name;
+
 }

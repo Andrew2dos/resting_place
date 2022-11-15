@@ -1,28 +1,19 @@
 package com.andrew2dos.restingplace.entity;
 
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-import lombok.Data;
+import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
-
 import javax.persistence.*;
-import javax.validation.constraints.Size;
 import java.util.Date;
 
 @Data
 @Entity
 @Table(name = "bookings", schema = "public", catalog = "resting_place")
-public class Camper {
+public class Booking {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
-    private Long bookingId;
+    private Long id;
 
-
-    @Column(name = "user_name")
-    @NotEmpty(message = "Name's cannot be empty.")
-    @Size(message = "Allows names between 2 and 30 characters long.", min=2, max=30)
-    private String userName;
     @ManyToOne
     @JoinColumn(name = "place_id")
     private Place place;
@@ -35,12 +26,16 @@ public class Camper {
     @Column(name = "end_date")
     private Date endDate;
 
+    @ManyToOne
+    private User user;
+
     @Override
     public String toString() {
-        return "Camper: \n" +
-                ", user - '" + userName + '\'' + "\n" +
-                ", place - '" + place.getPlaceName() + '\'' + "\n" +
-                ", start - " + startDate + "\n" +
-                ", end - " + endDate;
+        return "Booking{ " +
+//                "user=" + user.getUserName() +
+                ", place=" + place.getName() +
+                ", startDate=" + startDate +
+                ", endDate=" + endDate +
+                 '}';
     }
 }

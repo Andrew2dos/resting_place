@@ -3,37 +3,26 @@
       xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
-<head>
+<head  th:insert="fragments :: headerfiles">
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
 
     <link rel="stylesheet" type="text/css" media="screen "
-          href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css"/>
-
-    <link rel="stylesheet" type="text/css"
-          href="https://cdn.rawgit.com/Eonasdan/bootstrap-datetimepicker/e8bddc60e73c1ec2475f827be36e1957af72e2ea/build/css/bootstrap-datetimepicker.css">
+          href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css"/>
 
     <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
 
-    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
-    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-    <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
-    <![endif]-->
-    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
-    <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment-with-locales.js"></script>
-    <script src="https://cdn.rawgit.com/Eonasdan/bootstrap-datetimepicker/e8bddc60e73c1ec2475f827be36e1957af72e2ea/src/js/bootstrap-datetimepicker.js"></script>
 
     <title>Booking page</title>
 </head>
 <body>
+<header th:insert="fragments :: nav"></header>
 <div class="container">
     <br/><br/>
-        <div th:if="${bookingDTO.id == null}"><h1>Create New Booking</h1></div>
-        <div th:unless="${bookingDTO.id == null}"><h1>Edit Booking</h1></div>
+    <div th:if="${bookingDTO.id == null}"><h1>Create A New Booking</h1></div>
+    <div th:unless="${bookingDTO.id == null}"><h1 th:text="'Edit ' + ${userDto.userName} + '\'s Booking'">Edit Booking</h1></div>
     <hr>
 
     <form method="post" th:object="${bookingDTO}">
@@ -42,8 +31,12 @@
 
                 <input type="hidden" th:field="*{id}"/>
 
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+
+
 
                 <!--                Select user:-->
+                <div sec:authorize="hasRole('ROLE_ADMIN')">
                 <select th:field="*{user}" class="form-control" required>
                     <th:block th:if="${bookingDTO.id == null}">
                         <option value="null">Select user</option>
@@ -52,16 +45,20 @@
                         <option th:text="${person.userName}" th:value="${person.id}" />
                     </th:block>
                 </select></br>
+                </div>
+
+                <input type="hidden" class="form-control" sec:authorize="!hasRole('ROLE_ADMIN')" th:field="*{user}"/>
 
                 <!--                Select place:-->
-                        <select th:field="*{place}" class="form-control" required>
-                            <th:block th:if="${bookingDTO.id == null}">
-                            <option value="null">Select place</option>
-                            </th:block>
-                            <th:block th:each="site : ${places}">
-                                <option th:text="${site.name}" th:value="${site.id}" />
-                            </th:block>
-                        </select></br>
+
+                <select th:field="*{place}" class="form-control" required>
+                    <th:block th:if="${bookingDTO.id == null}">
+                        <option value="null">Select place</option>
+                    </th:block>
+                    <th:block th:each="site : ${places}">
+                        <option th:text="${site.name}" th:value="${site.id}"/>
+                    </th:block>
+                </select></br>
 
                 <!--                Select start date:-->
                 <div class='input-group date' id='datetimepicker6'>
@@ -69,7 +66,8 @@
                     <span class="input-group-addon">
                <span class="glyphicon glyphicon-calendar"></span>
                </span>
-                </div></br>
+                </div>
+                </br>
                 <!--                Select end date:-->
                 <div class='input-group date' id='datetimepicker7'>
                     <input type='text' class="form-control" th:field="*{endDate}" placeholder="Input end time"/>
@@ -104,7 +102,8 @@
         });
     });
 </script>
-
+<footer th:insert="fragments :: footer"></footer>
+<div th:insert="fragments :: scripts"></div>
 </body>
 </html>
 

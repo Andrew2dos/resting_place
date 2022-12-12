@@ -1,32 +1,32 @@
 package com.andrew2dos.restingplace.facade.impl;
 
+import com.andrew2dos.restingplace.mappers.UserMapper;
 import com.andrew2dos.restingplace.dto.UserDto;
 import com.andrew2dos.restingplace.entity.User;
 import com.andrew2dos.restingplace.facade.UserFacade;
 import com.andrew2dos.restingplace.service.UserService;
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 public class UserFacadeImpl implements UserFacade {
 
     private final UserService userService;
-    private final ModelMapper modelMapper;
 
-    public UserFacadeImpl(UserService userService, ModelMapper modelMapper) {
+    public UserFacadeImpl(UserService userService) {
         this.userService = userService;
-        this.modelMapper = modelMapper;
     }
 
     public List<UserDto> getAllUsers() {
-        return userService.getAllUsers().stream()
+        return userService.getAllUsers()
+                .stream()
                 .map(this::toDto)
+                .filter(userDto -> !userDto.getUserName().equals("admin"))
                 .collect(Collectors.toList());
     }
-
 
     public UserDto getById(Long userId) {
         User user = userService.getById(userId);
@@ -39,11 +39,24 @@ public class UserFacadeImpl implements UserFacade {
         return userService.save(user);
     }
 
+    public boolean existsById(Long id){
+        return userService.existsById(id);
+    }
+    public boolean existsByUserName(String userName){
+        return userService.existsByUserName(userName);
+    }
+
+    public UserDto getByUserName(String userName){
+        Optional<User> optional = userService.getByUserName(userName);
+        User user = optional.get();
+        return toDto(user);
+    }
+
     private User toModel(UserDto userDto) {
-        return modelMapper.map(userDto, User.class);
+        return UserMapper.INSTANCE.toModel(userDto);
     }
 
     private UserDto toDto(User user) {
-        return modelMapper.map(user, UserDto.class);
+        return UserMapper.INSTANCE.toDto(user);
     }
 }

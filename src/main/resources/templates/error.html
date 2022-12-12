@@ -3,7 +3,7 @@
       xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
-<head>
+<head th:insert="fragments :: headerfiles">
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -14,22 +14,24 @@
     <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
 </head>
 <body>
+<header th:insert="fragments :: nav"></header>
+
 <div class="container">
-    </br></br>
-    <h1>Something wrong:</h1>
-    <br/>
-
-    <h3><div th:if="${errorMessage}" th:utext="${errorMessage}"
+    <div class="jumbotron">
+        <h1>Something wrong:</h1>
+        <p class="lead">
+        <div th:if="${errorMessage}" th:utext="${errorMessage}"
              style="color:red;font-style:italic;">
-    </div></h3>
-
-    <hr>
-    </br>
-    <form>
+        </div>
+        </p>
+        <hr class="my-4">
+        <p>It uses utility classes for typography and spacing to space content out within the larger container.</p>
+        </br>
         <input type="button" class="btn btn-outline-secondary" value="Go back" onclick="history.back()">
-
-    </form>
-
+    </div>
 </div>
+
+<footer th:insert="fragments :: footer"></footer>
+<div th:insert="fragments :: scripts"></div>
 </body>
 </html>

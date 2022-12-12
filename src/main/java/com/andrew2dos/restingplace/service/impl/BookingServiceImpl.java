@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -27,6 +28,11 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public void deleteById(Long bookingId) {
         bookingRepository.deleteById(bookingId);
+    }
+
+    @Override
+    public List<Booking> findByUserId(Long id) {
+        return bookingRepository.findAllByUserId(id);
     }
 
     @Override

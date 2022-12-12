@@ -3,7 +3,7 @@
       xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
-<head>
+<head  th:insert="fragments :: headerfiles">
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -14,19 +14,27 @@
 
 </head>
 <body>
+<header th:insert="fragments :: nav"></header>
+
 <div class="container">
     </br></br>
-    <h1>Welcome</h1>
+    <h1 sec:authorize="!isAuthenticated()"> Welcomе </h1>
+    <h1 sec:authorize="isAuthenticated()" th:text="'Welcome ' + ${userName} + '!'"></h1>
     <hr>
     </br>
     <h2> Dear camper, are you ready to have a rest!? </h2>
     <hr>
     </br>
-    <h2><a th:href="@{/userPage}">Sign up as a new user </a></h2>
+    <div sec:authorize="!isAuthenticated()">
+    <h2>First time here?<a th:href="@{/user/register}"> <i class="fas fa-user-plus"></i> sign up as a new user </a></h2>
     <hr>
+    </div>
     </br>
-    <h2><a th:href="@{/bookingList}">View booked places </a></h2>
+    <h2><a th:href="@{/bookingList}"><i class="bi bi-card-list"></i> View booked places </a></h2>
 
 </div>
+
+<footer th:insert="fragments :: footer"></footer>
+<div th:insert="fragments :: scripts"></div>
 </body>
 </html>

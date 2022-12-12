@@ -3,7 +3,7 @@
       xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
-<head>
+<head th:insert="fragments :: headerfiles">
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -14,43 +14,82 @@
     <title>Booking List</title>
 </head>
 <body>
+<header th:insert="fragments :: nav"></header>
 <div class="container">
     <br/><br/>
-<h1>Booking List</h1>
+    <h1>Booking List</h1>
     <hr>
     <br/>
 
     <table class="table table-sm table-bordered table-striped">
         <thead class="thead-dark">
-            <tr>
-                <th> ID # </th>
-                <th>AUTHOR</th>
-                <th>PLACE</th>
-                <th>TIME FROM</th>
-                <th>TIME TO</th>
-                <th>ACTION</th>
-            </tr>
+        <tr>
+            <th> # ID</th>
+            <th><i class="bi bi-person-lines-fill"></i> AUTHOR</th>
+            <th><i class="bi bi-geo-alt-fill"></i> PLACE</th>
+            <th><i class="bi bi-clock-fill"></i> TIME FROM</th>
+            <th><i class="bi bi-clock"></i> TIME TO</th>
+            <th scope="col" sec:authorize="hasRole('ROLE_ADMIN')"><i class="bi bi-gear-fill"></i></i> ACTION</th>
+        </tr>
         </thead>
         <tbody>
-            <tr th:each ="booking : ${bookings}">
-                <td th:text="${booking.id}">...</td>
-<!--                <td th:text="${user.userId}">...</td>-->
-                <td th:text="${booking.user.userName}">...</td>
-                <td th:text="${booking.place.name}">...</td>
-                <td th:text="${#dates.format(booking.startDate, 'dd.MM.yyyy HH:mm')}">...</td>
-                <td th:text="${#dates.format(booking.endDate, 'dd.MM.yyyy HH:mm')}">...</td>
-                <td>
-                    <a th:href="@{/update(id=${booking.id})}" class="btn btn-outline-info btn-sm">Update</a>
-                    <a th:href="@{/delete(id=${booking.id})}" class="btn btn-outline-danger btn-sm"
-                    onclick="if (!(confirm('Are you sure you want to delete this booking note?'))) return false">Delete</a>
-                </td>
-            </tr>
+        <tr th:each="booking : ${bookings}">
+            <td th:text="${booking.id}">...</td>
+            <!--                <td th:text="${user.userId}">...</td>-->
+            <td th:text="${booking.user.userName}">...</td>
+            <td th:text="${booking.place.name}">...</td>
+            <td th:text="${#dates.format(booking.startDate, 'dd.MM.yyyy HH:mm')}">...</td>
+            <td th:text="${#dates.format(booking.endDate, 'dd.MM.yyyy HH:mm')}">...</td>
+            <td sec:authorize="hasRole('ROLE_ADMIN')">
+                <a th:href="@{/update(id=${booking.id})}" class="btn btn-outline-info btn-sm"><i class="bi bi-gear"></i>
+                    Update</a>
+                <a th:href="@{/delete(id=${booking.id})}" class="btn btn-outline-danger btn-sm"
+                   onclick="if (!(confirm('Are you sure you want to delete this booking note?'))) return false"><i
+                        class="bi bi-trash3"></i> Delete</a>
+            </td>
+        </tr>
         </tbody>
     </table>
 
-    <a th:href="bookingPage">Book Your Place</a>
+    <br/>
+    <div th:if="${not #lists.isEmpty(userBookings)}">
+    <div sec:authorize="isAuthenticated() && !hasRole('ROLE_ADMIN')"><h2>My Bookings</h2>
+        <hr>
+            <table class="table table-sm table-bordered table-striped">
+                <thead class="thead-dark">
+                <tr>
+                    <th><i class="bi bi-geo-alt-fill"></i> PLACE</th>
+                    <th><i class="bi bi-clock-fill"></i> TIME FROM</th>
+                    <th><i class="bi bi-clock"></i> TIME TO</th>
+                    <th scope="col"><i class="bi bi-gear-fill"></i></i> ACTION</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="booking : ${userBookings}">
+                    <td th:text="${booking.place.name}">...</td>
+                    <td th:text="${#dates.format(booking.startDate, 'dd.MM.yyyy HH:mm')}">...</td>
+                    <td th:text="${#dates.format(booking.endDate, 'dd.MM.yyyy HH:mm')}">...</td>
+                    <td>
+                        <a th:href="@{/update(id=${booking.id})}" class="btn btn-outline-info btn-sm"><i
+                                class="bi bi-gear"></i>
+                            Update</a>
+                        <a th:href="@{/delete(id=${booking.id})}" class="btn btn-outline-danger btn-sm"
+                           onclick="if (!(confirm('Are you sure you want to delete this booking note?'))) return false"><i
+                                class="bi bi-trash3"></i> Delete</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <a sec:authorize="isAuthenticated() && !hasRole('ROLE_ADMIN')" th:href="bookingPage"><i
+            class="bi bi-plus-circle"></i> Book Your Place</a>
+    <!--    sec:authorize="hasRole('ROLE_ADMIN')"-->
 
 
 </div>
+<footer th:insert="fragments :: footer"></footer>
+<div th:insert="fragments :: scripts"></div>
 </body>
 </html>

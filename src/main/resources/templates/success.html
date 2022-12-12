@@ -3,7 +3,7 @@
       xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
-<head>
+<head th:insert="fragments :: headerfiles">
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -14,14 +14,21 @@
     <title>Success</title>
 </head>
 <body>
+<header th:insert="fragments :: nav"></header>
 <div class="container">
-
-    <br><br><h1>Success...!</h1><br>
-
+    <div class="jumbotron">
+        <h1>Success...!</h1>
+        <p class="lead">
         <h4 th:text="${chosenPlace}">..!..</h4><br>
-
-    <h4> <a th:href="@{/bookingList}">Booking List</a></h4>
-
+        </p>
+        <hr class="my-4">
+        <p>It uses utility classes for typography and spacing to space content out within the larger container.</p>
+        </br>
+        <a th:href="@{/bookingList}" class="btn btn-outline-info btn-sm"></i> Booking List</a>
+    </div>
 </div>
+
+<footer th:insert="fragments :: footer"></footer>
+<div th:insert="fragments :: scripts"></div>
 </body>
 </html>

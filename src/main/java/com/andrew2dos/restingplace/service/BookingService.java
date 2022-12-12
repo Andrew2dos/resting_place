@@ -11,4 +11,5 @@ public interface BookingService {
     Booking findById(Long bookingId);
     Booking save(Booking booking);
     void deleteById(Long bookingId);
+    List<Booking> findByUserId(Long id);
 }
